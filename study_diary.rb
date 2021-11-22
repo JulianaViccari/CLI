@@ -12,7 +12,7 @@ end
 
 def qualquerTecla()
   puts "Pressione qualquer tecla para continuar"
-
+  
   gets.chomp()
 end
 
@@ -26,11 +26,12 @@ class Category
 end
 
 class Item
-  attr_accessor :description, :category
-
+  attr_accessor :description, :category, :createdAt
+  
   def initialize(description, category)
-  @description = description
-  @category = category
+    @description = description
+    @category = category
+    @createdAt = Time.now.to_s
   end
 end
 
@@ -45,15 +46,15 @@ def findCategoryById(id)
   aux = nil
 
   $catList.each{ | category | 
-     if category.id == id  
+    if category.id == id  
       aux = category
       break
      end
-  }
-  aux
-end
-
-def listCategory()
+    }
+    aux
+  end
+  
+  def listCategory()
   $catList.each{ | category |
     puts "##{category.id } #{category.description}"
   }
@@ -63,7 +64,7 @@ def listItems()
   $itemList.each{ | item |
     puts "#{item.description } #{item.category.description}"
   }
-
+  
   qualquerTecla()
 end
 
@@ -102,7 +103,11 @@ def findByDescription()
   gets.chomp()
 end
 
-
+def writeFile(item)
+  open("arquivo.txt", "a") { |f| 
+    f << "#{item.description} #{item.category.description} #{item.createdAt}\n"
+  }
+end
 
 opcao = 0
 while opcao != 4 do
@@ -112,6 +117,9 @@ while opcao != 4 do
   when 1
       item = createItem()
       $itemList << item 
+      writeFile(item)
+
+      
   when 2
     listItems()
   when 3
