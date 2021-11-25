@@ -1,0 +1,4 @@
+#!/usr/CLI/bin/env ruby
+
+system 'ruby study_diary.rb'
+

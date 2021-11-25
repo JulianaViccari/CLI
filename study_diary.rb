@@ -1,14 +1,13 @@
-puts  "Bem-vindo ao Diário de estudos. Vamos começar!!\n"
+require 'io/console'
+require_relative 'category'
+require_relative 'menu'
+require_relative 'item'
 
-def menu()
-  puts  "[1] Cadastrar um item para estudar"
-  puts  "[2] Ver todos os itens cadastrados"
-  puts  "[3] Buscar um item de estudo"
-  puts  "[4] Sair"
-  puts "Escolha uma opção:"
-  option = gets.chomp()
-  option
-end
+puts <<~Heredock 
+   Bem-vindo ao Diário de estudos. 
+   Vamos começar!!
+Heredock
+
 
 def qualquerTecla()
   puts "Pressione qualquer tecla para continuar"
@@ -16,36 +15,12 @@ def qualquerTecla()
   gets.chomp()
 end
 
-class Category
-  attr_accessor :id, :description
-  
-  def initialize(id, description)
-    @id = id
-    @description = description
-  end
-end
-
-class Item
-  attr_accessor :description, :category, :createdAt
-  
-  def initialize(description, category)
-    @description = description
-    @category = category
-    @createdAt = Time.now.to_s
-  end
-end
-
-ruby = Category.new(1, "Ruby")
-rails = Category.new(2, "Rails")
-html = Category.new(3, "HTML")
-
-$catList = [ruby, rails, html]
 $itemList = []
 
 def findCategoryById(id)
   aux = nil
 
-  $catList.each{ | category | 
+  Category.get_default_list().each{ | category | 
     if category.id == id  
       aux = category
       break
@@ -55,16 +30,33 @@ def findCategoryById(id)
   end
   
   def listCategory()
-  $catList.each{ | category |
-    puts "##{category.id } #{category.description}"
+    puts "Agora escolha a categoria:"
+    Category.get_default_list().each{ | category |
+    puts "#{category.id } #{category.description}"
   }
 end
 
 def listItems()
-  $itemList.each{ | item |
-    puts "#{item.description } #{item.category.description}"
-  }
+
+    if $itemList.length == 0
+      puts 'Nenhum item cadastrado'
+    else 
+      $itemList.each{ | item |
+        puts "#{item.description } #{item.category.description} "
+        }
+    end  
   
+  qualquerTecla()
+end
+
+def findItems()
+  if $itemList.length == 0
+    puts 'Nenhum item encontrado'
+  else
+    $itemList.each { |item| 
+    puts "#{item.description } #{item.category.description} Finalizada!"
+    }
+  end
   qualquerTecla()
 end
 
@@ -73,12 +65,18 @@ def createItem()
   puts "Digite o titulo de seu item de estudo:"
   description = gets.chomp()
 
+  
   listCategory()
-  puts "Escolha a categoria:"
   categoryOp = gets.chomp()
   
   category = findCategoryById(categoryOp.to_i)
   Item.new(description, category)
+end
+
+def wait_keypress
+  puts
+  puts "Pressione qualquer tecla para continuar"
+  STDIN.getch
 end
 
 def findByDescription()
@@ -87,21 +85,21 @@ def findByDescription()
 
   result = []
 
-  $itemList.each{ |item|
-    if  item.description.downcase.include? text.downcase
+  $itemList.each{ |item |
+    if item.description.downcase.include? text.downcase
       result << item
     end
   }
-
   puts "Foram encontrados #{result.length}\n"
   
   result.each{ | item | 
     puts "#{item.description} #{item.category.description}"
-  }
 
-  puts "Pressione qualquer tecla para continuar"
-  gets.chomp()
+  }
+    wait_keypress()
+
 end
+
 
 def writeFile(item)
   open("arquivo.txt", "a") { |f| 
@@ -109,25 +107,31 @@ def writeFile(item)
   }
 end
 
-opcao = 0
-while opcao != 4 do
-  opcao = menu()
+def print_menu_and_get_option()
+  menu = Menu.new()
+  menu.print_menu()
+  menu.read_option()
+end
 
-  case opcao.to_i
+option = 0
+while option != 5 do
+  option = print_menu_and_get_option()
+
+  case option.to_i
   when 1
       item = createItem()
       $itemList << item 
-      writeFile(item)
-
-      
+      writeFile(item)  
   when 2
     listItems()
   when 3
     findByDescription()
   when 4
-    opcao = 4
+    findItems()
+  when 5
+    option = 5
   else 
-    menu()
+    option = print_menu_and_get_option()
   end
 
   puts "\e[H\e[2J" #limpa terminal
