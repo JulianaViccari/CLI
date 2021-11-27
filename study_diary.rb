@@ -84,14 +84,6 @@ def find_by_title()
   puts 'Nenhum item encontrado' if results.empty?
   
     wait_keypress()
-
-end
-
-
-def writeFile(item)
-  open("arquivo.txt", "a") { |f| 
-    f << "#{item.title} #{item.category.description} #{item.created_at}\n"
-  }
 end
 
 def run_app()
@@ -104,8 +96,7 @@ def run_app()
     case option.to_i
     when 1
         item = Item.new().create_item()
-        $itemList << item 
-        writeFile(item)  
+        $itemList << item   
     when 2
       list_items()
     when 3
