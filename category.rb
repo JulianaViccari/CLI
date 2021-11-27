@@ -1,4 +1,5 @@
-class Category
+require_relative 'item'
+ class Category
   attr_accessor :id, :description
   
   def initialize(id, description)

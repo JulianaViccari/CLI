@@ -14,6 +14,11 @@ class Menu
   
   end
 
+  def print_menu_and_get_option()
+    print_menu()
+    read_option()
+  end
+
   def read_option()
     puts 'Escolha uma opção: '
     @option = gets.to_i

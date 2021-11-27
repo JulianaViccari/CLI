@@ -1,11 +1,21 @@
-teste1 Rails 2021-11-22 00:07:45 -0300
-teste2 Rails 2021-11-22 00:07:52 -0300
-teste3 HTML 2021-11-22 00:08:00 -0300
-Laços Ruby 2021-11-24 15:06:41 -0300
-ju Ruby 2021-11-24 16:08:03 -0300
-Juliana Ruby 2021-11-24 17:01:05 -0300
-juliana Ruby 2021-11-24 17:03:00 -0300
-juliana HTML 2021-11-24 17:13:15 -0300
-juliana Ruby 2021-11-24 17:18:17 -0300
-estudo teste Rails 2021-11-24 21:29:04 -0300
-tudo lido Ruby 2021-11-24 21:29:42 -0300
+ju Ruby 
+rtr Ruby 
+ju Ruby 
+juliana Ruby 
+ju Ruby 
+2 Rails 
+ju Ruby 
+fr Ruby 
+fr Ruby 
+2 Ruby 
+heredock Ruby 
+Laços Ruby 
+heredock Ruby 
+scan Rails 
+printf HTML 
+css Ruby 
+2 Ruby 
+de Rails 
+df Rails 
+de Rails 
+ert Rails 

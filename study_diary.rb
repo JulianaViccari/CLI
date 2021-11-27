@@ -3,21 +3,14 @@ require_relative 'category'
 require_relative 'menu'
 require_relative 'item'
 
-puts <<~Heredock 
-   Bem-vindo ao Diário de estudos. 
-   Vamos começar!!
-Heredock
-
-
-def qualquerTecla()
-  puts "Pressione qualquer tecla para continuar"
-  
-  gets.chomp()
-end
-
 $itemList = []
 
-def findCategoryById(id)
+def welcome()
+   puts 'Bem-vindo ao Diário de estudos. 
+   Vamos começar!!'
+end
+
+def find_category_by_id(id)
   aux = nil
 
   Category.get_default_list().each{ | category | 
@@ -29,73 +22,67 @@ def findCategoryById(id)
     aux
   end
   
-  def listCategory()
+  def list_category()
     puts "Agora escolha a categoria:"
     Category.get_default_list().each{ | category |
     puts "#{category.id } #{category.description}"
   }
 end
 
-def listItems()
-
-    if $itemList.length == 0
-      puts 'Nenhum item cadastrado'
-    else 
-      $itemList.each{ | item |
-        puts "#{item.description } #{item.category.description} "
-        }
-    end  
-  
-  qualquerTecla()
+def get_all()
+  $itemList
 end
 
-def findItems()
-  if $itemList.length == 0
+def list_items()
+        get_all().each.with_index(1) { |item,index|
+          puts "##{index} - #{item.title } - #{item.category.description} #{ 'Finalizada!' if item.done}"
+        }
+        puts 'Nenhum item cadastrado' if get_all().empty?
+  
+  wait_keypress()
+end
+
+
+def finalized_list()
+  not_finalized_list = get_all().filter { | item | !item.done }
+  get_all().each.with_index(1) do |item,index| 
+    puts "##{index} - #{item.title } - #{item.category.description} #{'Finalizada!' if item.done}"
+  end
+  
+  if not_finalized_list.empty?
     puts 'Nenhum item encontrado'
   else
-    $itemList.each { |item| 
-    puts "#{item.description } #{item.category.description} Finalizada!"
-    }
+    print 'Digite o item que deseja finalizar: '
+    index = gets.to_i
+    not_finalized_list[index -1].done = true
   end
-  qualquerTecla()
-end
-
-
-def createItem()
-  puts "Digite o titulo de seu item de estudo:"
-  description = gets.chomp()
-
   
-  listCategory()
-  categoryOp = gets.chomp()
   
-  category = findCategoryById(categoryOp.to_i)
-  Item.new(description, category)
-end
+  wait_keypress()
+ 
+ end
 
 def wait_keypress
-  puts
   puts "Pressione qualquer tecla para continuar"
   STDIN.getch
 end
 
-def findByDescription()
-  puts "Digite o texto:"
+def find_by_title()
+  puts "Digite o texto para procura:"
   text = gets.chomp()
 
-  result = []
+  results = get_all().filter do |item |
+    item.title.downcase.include? text.downcase
+  end
 
-  $itemList.each{ |item |
-    if item.description.downcase.include? text.downcase
-      result << item
-    end
-  }
-  puts "Foram encontrados #{result.length}\n"
+  puts "Foram encontrados #{results.length} \n "
   
-  result.each{ | item | 
-    puts "#{item.description} #{item.category.description}"
+  results.each { |e|
+    puts " - #{ e.title } #{e.category.description}"
+   }
 
-  }
+  puts 'Nenhum item encontrado' if results.empty?
+  
     wait_keypress()
 
 end
@@ -103,40 +90,41 @@ end
 
 def writeFile(item)
   open("arquivo.txt", "a") { |f| 
-    f << "#{item.description} #{item.category.description} #{item.createdAt}\n"
+    f << "#{item.title} #{item.category.description} #{item.created_at}\n"
   }
 end
 
-def print_menu_and_get_option()
+def run_app()
   menu = Menu.new()
-  menu.print_menu()
-  menu.read_option()
-end
 
-option = 0
-while option != 5 do
-  option = print_menu_and_get_option()
-
-  case option.to_i
-  when 1
-      item = createItem()
-      $itemList << item 
-      writeFile(item)  
-  when 2
-    listItems()
-  when 3
-    findByDescription()
-  when 4
-    findItems()
-  when 5
-    option = 5
-  else 
-    option = print_menu_and_get_option()
+  option = 0
+  while option != 5 do
+    option = menu.print_menu_and_get_option()
+  
+    case option.to_i
+    when 1
+        item = Item.new().create_item()
+        $itemList << item 
+        writeFile(item)  
+    when 2
+      list_items()
+    when 3
+      find_by_title()
+    when 4
+      finalized_list()
+    when 5
+      option = 5
+    else 
+      option = menu.print_menu_and_get_option()
+    end
+  
+    puts "\e[H\e[2J" #limpa terminal
   end
-
-  puts "\e[H\e[2J" #limpa terminal
-         
+  
+  puts "programa finalizado" 
 end
+puts "\e[H\e[2J" #limpa terminal
+welcome()
+run_app()
 
-puts "programa finalizado" 
 
