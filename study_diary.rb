@@ -57,9 +57,7 @@ def finalized_list()
     not_finalized_list[index -1].done = true
   end
   
-  
   wait_keypress()
- 
  end
 
 def wait_keypress
